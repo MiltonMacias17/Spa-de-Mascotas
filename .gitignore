@@ -1,0 +1,11 @@
+.venv/
+venv/
+
+.env
+
+db.sqlite3
+
+petspa.rar
+python-3.12.7-amd64.exe
+
+media/
