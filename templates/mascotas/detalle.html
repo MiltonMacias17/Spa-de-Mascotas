@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}{{ mascota.nombre }}{% endblock %}
+{% block page_title %}{{ mascota.nombre }}{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'mascotas:editar' mascota.pk %}" class="btn btn-sm btn-outline">Editar</a>
+{% endblock %}
+{% block content %}
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-body">
+      {% if mascota.foto_perfil %}
+      <img src="{{ mascota.foto_perfil.url }}" class="mascota-detail-foto">
+      {% else %}
+      <div class="mascota-detail-placeholder">🐶</div>
+      {% endif %}
+      <table class="table">
+        <tr><th>Especie</th><td>{{ mascota.especie }}</td></tr>
+        <tr><th>Raza</th><td>{{ mascota.raza }}</td></tr>
+        <tr><th>Tamaño</th><td>{{ mascota.get_tamanio_display }}</td></tr>
+        <tr><th>Edad</th><td>{{ mascota.edad_texto }}</td></tr>
+        <tr><th>Peso</th><td>{{ mascota.peso_kg }} kg</td></tr>
+        <tr><th>Temperamento</th><td>{{ mascota.get_temperamento_display }}</td></tr>
+        <tr><th>Alergias</th><td>{{ mascota.alergias|default:"—" }}</td></tr>
+        <tr><th>Restricciones</th><td>{{ mascota.restricciones|default:"—" }}</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <div class="card-header"><h3>Vacunas</h3></div>
+      <div class="card-body">
+        {% for v in vacunas %}
+        <div class="vacuna-item">
+          <strong>{{ v.nombre }}</strong>
+          <span>{{ v.fecha_aplicacion }} — vence: {{ v.fecha_vencimiento|default:"—" }}</span>
+        </div>
+        {% empty %}
+        <p class="text-muted">Sin vacunas registradas.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1rem">
+      <div class="card-header">
+        <h3>Últimas Citas</h3>
+        <a href="{% url 'agenda:nueva_cita' %}" class="btn btn-sm btn-primary">Nueva Cita</a>
+      </div>
+      <div class="card-body">
+        {% for cita in citas %}
+        <div class="cita-item">
+          <span class="badge badge-{{ cita.estado }}">{{ cita.get_estado_display }}</span>
+          <span>{{ cita.servicio.nombre }} — {{ cita.fecha_hora_inicio|date:"d/m/Y H:i" }}</span>
+        </div>
+        {% empty %}
+        <p class="text-muted">Sin citas previas.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

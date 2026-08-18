@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Alertas de Inventario{% endblock %}
+{% block page_title %}⚠️ Inventario Crítico{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    {% if productos %}
+    <table class="table">
+      <thead><tr><th>Producto</th><th>Stock actual</th><th>Mínimo</th><th>Diferencia</th><th></th></tr></thead>
+      <tbody>
+        {% for p in productos %}
+        <tr>
+          <td>{{ p.nombre }}</td>
+          <td class="text-danger font-bold">{{ p.stock_actual }}</td>
+          <td>{{ p.stock_minimo }}</td>
+          <td class="text-danger">-{{ p.stock_minimo|add:"-"|add:p.stock_actual }}</td>
+          <td><a href="{% url 'inventario:entrada' p.pk %}" class="btn btn-sm btn-success">Reponer</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">✅</div>
+      <p>Todo el inventario está en niveles normales.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Mi Agenda{% endblock %}
+{% block page_title %}Mi Agenda — {{ hoy|date:"d/m/Y" }}{% endblock %}
+{% block content %}
+
+<div class="kpi-grid">
+  <div class="kpi-card kpi-blue">
+    <div class="kpi-icon">📋</div>
+    <div class="kpi-value">{{ citas_hoy|length }}</div>
+    <div class="kpi-label">Citas asignadas hoy</div>
+  </div>
+  <div class="kpi-card kpi-green">
+    <div class="kpi-icon">✅</div>
+    <div class="kpi-value">{{ citas_completadas_hoy }}</div>
+    <div class="kpi-label">Completadas hoy</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h3>Mis citas del día</h3></div>
+  <div class="card-body">
+    {% if citas_hoy %}
+    <div class="citas-timeline">
+      {% for cita in citas_hoy %}
+      <div class="timeline-item estado-{{ cita.estado }}">
+        <div class="timeline-time">{{ cita.fecha_hora_inicio|time:"H:i" }}</div>
+        <div class="timeline-content">
+          <div class="timeline-title">{{ cita.mascota.nombre }}</div>
+          <div class="timeline-sub">{{ cita.servicio.nombre }} · {{ cita.duracion_minutos }} min</div>
+          <div class="timeline-actions">
+            <a href="{% url 'agenda:detalle_cita' cita.pk %}" class="btn btn-xs btn-outline">Detalle</a>
+            {% if cita.ficha %}
+            <a href="{% url 'grooming:ficha' cita.ficha.pk %}" class="btn btn-xs btn-primary">Abrir Ficha</a>
+            {% endif %}
+          </div>
+        </div>
+        <span class="badge badge-{{ cita.estado }}">{{ cita.get_estado_display }}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">No tienes citas asignadas para hoy. 🎉</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Nueva Cita{% endblock %}
+{% block page_title %}Nueva Cita{% endblock %}
+{% block content %}
+<div class="card" style="max-width:700px">
+  <div class="card-body">
+    <form method="post" novalidate id="form-cita">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Mascota</label>
+        {{ form.mascota }}
+        {% if form.mascota.errors %}<span class="form-error">{{ form.mascota.errors.0 }}</span>{% endif %}
+      </div>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label>Servicio</label>
+          {{ form.servicio }}
+          {% if form.servicio.errors %}<span class="form-error">{{ form.servicio.errors.0 }}</span>{% endif %}
+        </div>
+        <div class="form-group">
+          <label>Groomer</label>
+          {{ form.groomer }}
+          {% if form.groomer.errors %}<span class="form-error">{{ form.groomer.errors.0 }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Fecha y hora de inicio</label>
+        {{ form.fecha_hora_inicio }}
+        {% if form.fecha_hora_inicio.errors %}<span class="form-error">{{ form.fecha_hora_inicio.errors.0 }}</span>{% endif %}
+      </div>
+      <div class="form-group" id="duracion-info" style="display:none">
+        <div class="info-box">
+          ⏱️ Duración estimada: <strong id="duracion-texto">—</strong>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notas</label>
+        {{ form.notas }}
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Crear Cita</button>
+        <a href="{% url 'agenda:calendario' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+<script>
+const serviciosData = {{ servicios_json|safe }};
+const selectServicio = document.getElementById('id_servicio');
+const duracionInfo   = document.getElementById('duracion-info');
+const duracionTexto  = document.getElementById('duracion-texto');
+selectServicio.addEventListener('change', function() {
+  const sid = this.value;
+  if (sid && serviciosData[sid]) {
+    const min = serviciosData[sid].duracion;
+    duracionTexto.textContent = min + ' minutos';
+    duracionInfo.style.display = 'block';
+  } else {
+    duracionInfo.style.display = 'none';
+  }
+});
+</script>
+{% endblock %}

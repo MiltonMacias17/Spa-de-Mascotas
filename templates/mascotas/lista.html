@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Mascotas{% endblock %}
+{% block page_title %}Mascotas{% endblock %}
+{% block topbar_actions %}<a href="{% url 'mascotas:nueva' %}" class="btn btn-primary btn-sm">+ Nueva Mascota</a>{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    {% if mascotas %}
+    <table class="table">
+      <thead><tr><th>Nombre</th><th>Especie</th><th>Raza</th><th>Tamaño</th><th>Edad</th><th></th></tr></thead>
+      <tbody>
+        {% for m in mascotas %}
+        <tr>
+          <td>
+            {% if m.foto_perfil %}<img src="{{ m.foto_perfil.url }}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;margin-right:.5rem">{% endif %}
+            {{ m.nombre }}
+          </td>
+          <td>{{ m.especie }}</td>
+          <td>{{ m.raza }}</td>
+          <td>{{ m.get_tamanio_display }}</td>
+          <td>{{ m.edad_texto }}</td>
+          <td>
+            <a href="{% url 'mascotas:detalle' m.pk %}" class="btn btn-xs btn-outline">Ver</a>
+            <a href="{% url 'mascotas:editar' m.pk %}" class="btn btn-xs btn-outline">Editar</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🐾</div>
+      <p>No hay mascotas registradas.</p>
+      <a href="{% url 'mascotas:nueva' %}" class="btn btn-primary">Registrar primera mascota</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

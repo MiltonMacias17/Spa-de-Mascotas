@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Pet Spa{% endblock %} — Pet Spa</title>
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="logo">🐾 Pet Spa</span>
+      <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="{% url 'dashboard:inicio' %}" class="nav-item {% if request.resolver_match.namespace == 'dashboard' %}active{% endif %}">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+      </a>
+
+      {% if user.rol.nombre != 'cliente' %}
+      <a href="{% url 'agenda:calendario' %}" class="nav-item {% if request.resolver_match.namespace == 'agenda' %}active{% endif %}">
+        <span class="nav-icon">📅</span><span class="nav-label">Agenda</span>
+      </a>
+      {% endif %}
+
+      <a href="{% url 'mascotas:lista' %}" class="nav-item {% if request.resolver_match.namespace == 'mascotas' %}active{% endif %}">
+        <span class="nav-icon">🐶</span><span class="nav-label">Mascotas</span>
+      </a>
+
+      {% if user.rol.nombre in 'admin,recepcion,groomer' %}
+      <a href="{% url 'grooming:ficha' 1 %}" class="nav-item {% if request.resolver_match.namespace == 'grooming' %}active{% endif %}" style="display:none" id="nav-grooming">
+        <span class="nav-icon">✂️</span><span class="nav-label">Grooming</span>
+      </a>
+      {% endif %}
+
+      <a href="{% url 'tienda:catalogo' %}" class="nav-item {% if request.resolver_match.namespace == 'tienda' %}active{% endif %}">
+        <span class="nav-icon">🛍️</span><span class="nav-label">Tienda</span>
+      </a>
+
+      {% if user.rol.nombre in 'admin,recepcion' %}
+      <a href="{% url 'inventario:lista' %}" class="nav-item {% if request.resolver_match.namespace == 'inventario' %}active{% endif %}">
+        <span class="nav-icon">📦</span><span class="nav-label">Inventario</span>
+      </a>
+      <a href="{% url 'facturacion:lista' %}" class="nav-item {% if request.resolver_match.namespace == 'facturacion' %}active{% endif %}">
+        <span class="nav-icon">💳</span><span class="nav-label">Facturación</span>
+      </a>
+      {% endif %}
+
+      {% if user.rol.nombre == 'admin' %}
+      <a href="{% url 'dashboard:ocupacion' %}" class="nav-item">
+        <span class="nav-icon">📈</span><span class="nav-label">Reportes</span>
+      </a>
+      {% endif %}
+
+      <div class="nav-divider"></div>
+
+      <a href="{% url 'notificaciones:lista' %}" class="nav-item">
+        <span class="nav-icon">🔔</span><span class="nav-label">Notificaciones</span>
+      </a>
+      <a href="{% url 'usuarios:perfil' %}" class="nav-item">
+        <span class="nav-icon">👤</span><span class="nav-label">Mi Perfil</span>
+      </a>
+      <a href="{% url 'usuarios:logout' %}" class="nav-item nav-logout">
+        <span class="nav-icon">🚪</span><span class="nav-label">Salir</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="user-rol">{{ user.rol }}</span>
+      <span class="user-email">{{ user.email }}</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+      <h1 class="page-title">{% block page_title %}{% endblock %}</h1>
+      <div class="topbar-actions">{% block topbar_actions %}{% endblock %}</div>
+    </header>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages-container">
+      {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags }}">
+        {{ msg }}
+        <button class="alert-close" onclick="this.parentElement.remove()">×</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="content-body">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+</div>
+
+<script src="{% static 'js/base.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

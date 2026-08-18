@@ -1,0 +1,50 @@
+/* Auth pages */
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  padding: 1rem;
+}
+.auth-brand {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+.auth-logo { font-size: 4rem; }
+.auth-title { font-size: 2rem; font-weight: 800; margin: .5rem 0 .25rem; }
+.auth-subtitle { opacity: .8; }
+
+.auth-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.auth-links {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: .875rem;
+  color: #6c757d;
+}
+.auth-links a { color: var(--primary); font-weight: 500; }
+.auth-links span { margin: 0 .5rem; }
+
+/* Password meter */
+.password-meter {
+  height: 5px;
+  background: #e9ecef;
+  border-radius: 3px;
+  margin-top: .35rem;
+  overflow: hidden;
+}
+.meter-bar {
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  transition: width .3s, background .3s;
+}
+.meter-label {
+  font-size: .75rem;
+  color: #6c757d;
+  display: block;
+  margin-top: .25rem;
+}

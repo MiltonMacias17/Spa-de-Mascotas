@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Facturas{% endblock %}
+{% block page_title %}Facturas{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <table class="table">
+      <thead><tr><th>#</th><th>Cliente</th><th>Total</th><th>Método</th><th>Estado</th><th>Fecha</th><th></th></tr></thead>
+      <tbody>
+        {% for f in facturas %}
+        <tr>
+          <td>{{ f.numero_secuencial }}</td>
+          <td>{{ f.cliente.nombre }}</td>
+          <td>Bs. {{ f.total }}</td>
+          <td>{{ f.get_metodo_pago_display }}</td>
+          <td><span class="badge badge-{{ f.estado }}">{{ f.get_estado_display }}</span></td>
+          <td>{{ f.fecha_emision|date:"d/m/Y H:i" }}</td>
+          <td><a href="{% url 'facturacion:detalle' f.pk %}" class="btn btn-xs btn-outline">Ver</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7" class="text-center text-muted">Sin facturas.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

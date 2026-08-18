@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Carrito{% endblock %}
+{% block page_title %}Mi Carrito{% endblock %}
+{% block content %}
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-body">
+      {% if items %}
+      <table class="table">
+        <thead><tr><th>Producto</th><th>Variante</th><th>Precio</th><th>Cant.</th><th>Subtotal</th><th></th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.producto.nombre }}</td>
+            <td>{% if item.variante %}{{ item.variante.atributo }}: {{ item.variante.valor }}{% else %}—{% endif %}</td>
+            <td>Bs. {{ item.precio_unitario }}</td>
+            <td>{{ item.cantidad }}</td>
+            <td>Bs. {{ item.subtotal }}</td>
+            <td><a href="{% url 'tienda:quitar' item.pk %}" class="btn btn-xs btn-danger">✕</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr><td colspan="4"><strong>Total</strong></td><td><strong>Bs. {{ carrito.total }}</strong></td><td></td></tr>
+        </tfoot>
+      </table>
+      <div class="form-actions">
+        <a href="{% url 'tienda:pedido_whatsapp' %}" class="btn btn-success">
+          📱 Hacer Pedido por WhatsApp/Telegram
+        </a>
+        <a href="{% url 'tienda:catalogo' %}" class="btn btn-outline">Seguir comprando</a>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon">🛒</div>
+        <p>El carrito está vacío.</p>
+        <a href="{% url 'tienda:catalogo' %}" class="btn btn-primary">Ir a la Tienda</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Cita #{{ cita.pk }}{% endblock %}
+{% block page_title %}Cita #{{ cita.pk }}{% endblock %}
+{% block content %}
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-body">
+      <table class="table">
+        <tr><th>Mascota</th><td><a href="{% url 'mascotas:detalle' cita.mascota.pk %}">{{ cita.mascota.nombre }}</a></td></tr>
+        <tr><th>Servicio</th><td>{{ cita.servicio.nombre }}</td></tr>
+        <tr><th>Groomer</th><td>{{ cita.groomer }}</td></tr>
+        <tr><th>Inicio</th><td>{{ cita.fecha_hora_inicio|date:"d/m/Y H:i" }}</td></tr>
+        <tr><th>Fin estimado</th><td>{{ cita.fecha_hora_fin|date:"H:i" }}</td></tr>
+        <tr><th>Duración</th><td>{{ cita.duracion_minutos }} min</td></tr>
+        <tr><th>Estado</th><td><span class="badge badge-{{ cita.estado }}">{{ cita.get_estado_display }}</span></td></tr>
+        <tr><th>Precio</th><td>Bs. {{ cita.precio_calculado }}</td></tr>
+        <tr><th>Notas</th><td>{{ cita.notas|default:"—" }}</td></tr>
+      </table>
+
+      <div class="form-actions">
+        {% if cita.estado == 'agendada' %}
+        <a href="{% url 'agenda:confirmar_cita' cita.pk %}" class="btn btn-success">Confirmar</a>
+        <a href="{% url 'agenda:cancelar_cita' cita.pk %}" class="btn btn-danger">Cancelar</a>
+        {% endif %}
+        {% if cita.ficha %}
+        <a href="{% url 'grooming:ficha' cita.ficha.pk %}" class="btn btn-primary">Ver Ficha de Grooming</a>
+        {% endif %}
+        {% if cita.estado == 'completada' %}
+        <a href="{% url 'facturacion:crear_cita' cita.pk %}" class="btn btn-success">Generar Factura</a>
+        {% endif %}
+        <a href="{% url 'agenda:calendario' %}" class="btn btn-outline">Volver</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

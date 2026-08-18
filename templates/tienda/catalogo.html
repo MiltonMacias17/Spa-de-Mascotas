@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Tienda{% endblock %}
+{% block page_title %}Tienda{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'tienda:carrito' %}" class="btn btn-outline btn-sm">🛒 Carrito ({{ carrito_count }})</a>
+{% endblock %}
+{% block content %}
+
+<!-- Búsqueda y filtros -->
+<div class="filter-bar">
+  <form method="get" style="display:flex;gap:.5rem;flex:1">
+    <input type="text" name="q" value="{{ busqueda }}" placeholder="Buscar producto..." class="form-control">
+    <button type="submit" class="btn btn-primary btn-sm">Buscar</button>
+  </form>
+  <div style="display:flex;gap:.5rem">
+    <a href="{% url 'tienda:catalogo' %}" class="filter-btn {% if not request.GET.categoria %}active{% endif %}">Todos</a>
+    {% for cat in categorias %}
+    <a href="?categoria={{ cat.pk }}" class="filter-btn {% if request.GET.categoria == cat.pk|stringformat:'s' %}active{% endif %}">{{ cat.nombre }}</a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Productos -->
+<div class="productos-grid">
+  {% for p in productos %}
+  <div class="producto-card">
+    {% if p.imagen %}
+    <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="producto-img">
+    {% else %}
+    <div class="producto-img-placeholder">📦</div>
+    {% endif %}
+    <div class="producto-info">
+      <h4 class="producto-nombre">{{ p.nombre }}</h4>
+      <p class="producto-desc">{{ p.descripcion|truncatechars:80 }}</p>
+      <div class="producto-footer">
+        <span class="producto-precio">Bs. {{ p.precio_base }}</span>
+        {% if p.bajo_stock %}
+        <span class="badge badge-warning">Poco stock</span>
+        {% endif %}
+      </div>
+      <div class="producto-actions">
+        <a href="{% url 'tienda:producto' p.pk %}" class="btn btn-outline btn-sm">Ver</a>
+        <button class="btn btn-primary btn-sm btn-agregar"
+                data-producto="{{ p.pk }}" data-nombre="{{ p.nombre }}">
+          + Carrito
+        </button>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state" style="grid-column:1/-1">
+    <div class="empty-icon">🔍</div>
+    <p>No se encontraron productos.</p>
+  </div>
+  {% endfor %}
+</div>
+
+<script src="{% static 'js/carrito.js' %}"></script>
+{% endblock %}

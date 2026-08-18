@@ -1,0 +1,50 @@
+{% extends 'base_auth.html' %}
+{% load static %}
+{% block title %}Crear Cuenta{% endblock %}
+{% block content %}
+<h2 class="form-title">Crear Cuenta</h2>
+<form method="post" novalidate>
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Nombre completo</label>
+    {{ form.nombre }}
+    {% if form.nombre.errors %}<span class="form-error">{{ form.nombre.errors.0 }}</span>{% endif %}
+  </div>
+  <div class="form-group">
+    <label>Cédula de identidad</label>
+    {{ form.ci }}
+    {% if form.ci.errors %}<span class="form-error">{{ form.ci.errors.0 }}</span>{% endif %}
+  </div>
+  <div class="form-group">
+    <label>Teléfono</label>
+    {{ form.telefono }}
+  </div>
+  <div class="form-group">
+    <label>Correo electrónico</label>
+    {{ form.email }}
+    {% if form.email.errors %}<span class="form-error">{{ form.email.errors.0 }}</span>{% endif %}
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    {{ form.password1 }}
+    <div class="password-meter">
+      <div class="meter-bar" id="meter-bar"></div>
+    </div>
+    <span class="meter-label" id="meter-label">Ingresa una contraseña</span>
+    {% if form.password1.errors %}<span class="form-error">{{ form.password1.errors.0 }}</span>{% endif %}
+  </div>
+  <div class="form-group">
+    <label>Confirmar contraseña</label>
+    {{ form.password2 }}
+    {% if form.password2.errors %}<span class="form-error">{{ form.password2.errors.0 }}</span>{% endif %}
+  </div>
+  <div class="form-hint">
+    La contraseña debe tener mínimo 8 caracteres, mayúsculas, minúsculas, números y símbolos.
+  </div>
+  <button type="submit" class="btn btn-primary btn-full">Crear Cuenta</button>
+</form>
+<div class="auth-links">
+  <a href="{% url 'usuarios:login' %}">¿Ya tienes cuenta? Inicia sesión</a>
+</div>
+<script src="{% static 'js/password_meter.js' %}"></script>
+{% endblock %}

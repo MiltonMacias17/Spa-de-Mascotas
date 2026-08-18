@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Historial — {{ mascota.nombre }}{% endblock %}
+{% block page_title %}Historial de {{ mascota.nombre }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    {% if historial %}
+    <div class="historial-timeline">
+      {% for evento in historial %}
+      <div class="historial-item">
+        <div class="historial-dot tipo-{{ evento.tipo_evento }}"></div>
+        <div class="historial-content">
+          <span class="historial-tipo badge badge-{{ evento.tipo_evento }}">{{ evento.get_tipo_evento_display }}</span>
+          <p>{{ evento.descripcion }}</p>
+          <small class="text-muted">{{ evento.fecha|date:"d/m/Y H:i" }}{% if evento.creado_por %} · {{ evento.creado_por.get_full_name }}{% endif %}</small>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-muted">Sin eventos en el historial.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

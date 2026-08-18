@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}Ficha de Grooming{% endblock %}
+{% block page_title %}Ficha de Grooming — {{ ficha.cita.mascota.nombre }}{% endblock %}
+{% block content %}
+
+<div class="detail-grid">
+  <!-- Panel izquierdo: datos de la ficha -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h3>Estado al Ingreso</h3>
+        {% if not ficha.fecha_cierre %}
+        <span class="badge badge-en_progreso">En proceso</span>
+        {% else %}
+        <span class="badge badge-completada">Cerrada</span>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        {% if not ficha.fecha_cierre %}
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="accion" value="actualizar_estado">
+          <div class="form-group">
+            <label>Estado de ingreso (nudos, pulgas, heridas...)</label>
+            <textarea name="estado_ingreso" class="form-control" rows="3">{{ ficha.estado_ingreso }}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Temperatura (°C)</label>
+            <input type="number" name="temperatura" class="form-control" value="{{ ficha.temperatura_animal|default:'' }}" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Notas internas (solo equipo)</label>
+            <textarea name="notas_internas" class="form-control" rows="2">{{ ficha.notas_internas }}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Recomendaciones para el dueño</label>
+            <textarea name="recomendaciones" class="form-control" rows="2">{{ ficha.recomendaciones }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </form>
+        {% else %}
+        <table class="table">
+          <tr><th>Estado ingreso</th><td>{{ ficha.estado_ingreso|default:"—" }}</td></tr>
+          <tr><th>Temperatura</th><td>{{ ficha.temperatura_animal|default:"—" }}°C</td></tr>
+          <tr><th>Recomendaciones</th><td>{{ ficha.recomendaciones|default:"—" }}</td></tr>
+          <tr><th>Cerrada</th><td>{{ ficha.fecha_cierre|date:"d/m/Y H:i" }}</td></tr>
+        </table>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Fotos -->
+    <div class="card" style="margin-top:1rem">
+      <div class="card-header"><h3>📸 Fotos</h3></div>
+      <div class="card-body">
+        <div class="fotos-grid">
+          {% for foto in fotos %}
+          <div class="foto-item">
+            <img src="{{ foto.imagen.url }}" alt="{{ foto.momento }}">
+            <span class="badge badge-{{ foto.momento }}">{{ foto.get_momento_display }}</span>
+          </div>
+          {% empty %}
+          <p class="text-muted">Sin fotos aún.</p>
+          {% endfor %}
+        </div>
+        {% if not ficha.fecha_cierre %}
+        <form method="post" enctype="multipart/form-data" action="{% url 'grooming:fotos' ficha.pk %}" style="margin-top:1rem">
+          {% csrf_token %}
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Imagen</label>
+              <input type="file" name="imagen" class="form-control" accept="image/*">
+            </div>
+            <div class="form-group">
+              <label>Momento</label>
+              <select name="momento" class="form-control">
+                <option value="antes">Antes</option>
+                <option value="despues">Después</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-outline btn-sm">Subir Foto</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel derecho: checklist -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <h3>✅ Checklist</h3>
+        <span class="badge badge-blue">{{ checklist|length }} items</span>
+      </div>
+      <div class="card-body">
+        {% if not ficha.fecha_cierre %}
+        <form method="post" action="{% url 'grooming:checklist' ficha.pk %}">
+          {% csrf_token %}
+          {% for item in checklist %}
+          <div class="checklist-item">
+            <label class="checklist-label">
+              <input type="checkbox" name="item_{{ item.pk }}" {% if item.completado %}checked{% endif %}>
+              <span class="checklist-nombre">{{ item.item.nombre }}</span>
+            </label>
+            {% if item.item.requiere_observacion %}
+            <input type="text" name="obs_{{ item.pk }}" class="form-control form-control-sm"
+                   placeholder="Observación..." value="{{ item.observacion }}">
+            {% endif %}
+          </div>
+          {% empty %}
+          <p class="text-muted">Sin items de checklist.</p>
+          {% endfor %}
+          {% if checklist %}
+          <button type="submit" class="btn btn-primary btn-full" style="margin-top:1rem">Guardar Checklist</button>
+          {% endif %}
+        </form>
+        {% else %}
+        {% for item in checklist %}
+        <div class="checklist-item {% if item.completado %}completado{% endif %}">
+          <span>{% if item.completado %}✅{% else %}○{% endif %} {{ item.item.nombre }}</span>
+          {% if item.observacion %}<small class="text-muted">{{ item.observacion }}</small>{% endif %}
+        </div>
+        {% endfor %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Botón cerrar ficha -->
+    {% if not ficha.fecha_cierre %}
+    <div class="card" style="margin-top:1rem">
+      <div class="card-body" style="text-align:center">
+        <h4>Cerrar Servicio</h4>
+        <p class="text-muted">Verifica que el checklist esté completo y hayas subido fotos antes/después.</p>
+        <a href="{% url 'grooming:cerrar' ficha.pk %}" class="btn btn-success btn-full"
+           onclick="return confirm('¿Cerrar la ficha? Se descantará el inventario y se notificará al cliente.')">
+          🔒 Cerrar Ficha y Notificar Cliente
+        </a>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

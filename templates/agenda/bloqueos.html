@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Bloqueos de Agenda{% endblock %}
+{% block page_title %}Bloqueos de Agenda{% endblock %}
+{% block content %}
+<div class="detail-grid">
+  <div class="card">
+    <div class="card-header"><h3>Nuevo Bloqueo</h3></div>
+    <div class="card-body">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<span class="form-error">{{ field.errors.0 }}</span>{% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Guardar Bloqueo</button>
+      </form>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Bloqueos registrados</h3></div>
+    <div class="card-body">
+      {% for b in bloqueos %}
+      <div class="bloqueo-item">
+        <span class="badge badge-warning">{{ b.get_tipo_display }}</span>
+        <span>{{ b.groomer|default:"Global" }}</span>
+        <span>{{ b.fecha_inicio|date:"d/m/Y H:i" }} → {{ b.fecha_fin|date:"d/m/Y H:i" }}</span>
+      </div>
+      {% empty %}<p class="text-muted">Sin bloqueos.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

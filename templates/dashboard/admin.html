@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'agenda:nueva_cita' %}" class="btn btn-primary btn-sm">+ Nueva Cita</a>
+{% endblock %}
+{% block content %}
+
+<!-- KPI Cards -->
+<div class="kpi-grid">
+  <div class="kpi-card kpi-blue">
+    <div class="kpi-icon">📅</div>
+    <div class="kpi-value">{{ citas_hoy }}</div>
+    <div class="kpi-label">Citas hoy</div>
+  </div>
+  <div class="kpi-card kpi-green">
+    <div class="kpi-icon">📆</div>
+    <div class="kpi-value">{{ citas_semana }}</div>
+    <div class="kpi-label">Citas esta semana</div>
+  </div>
+  <div class="kpi-card kpi-orange">
+    <div class="kpi-icon">💰</div>
+    <div class="kpi-value">Bs. {{ ingresos_hoy|floatformat:2 }}</div>
+    <div class="kpi-label">Ingresos hoy</div>
+  </div>
+  <div class="kpi-card kpi-purple">
+    <div class="kpi-icon">🐶</div>
+    <div class="kpi-value">{{ total_mascotas }}</div>
+    <div class="kpi-label">Mascotas registradas</div>
+  </div>
+</div>
+
+<div class="dashboard-grid">
+  <!-- Citas del día -->
+  <div class="card">
+    <div class="card-header">
+      <h3>Citas pendientes hoy</h3>
+      <a href="{% url 'agenda:calendario' %}" class="btn btn-sm btn-outline">Ver agenda</a>
+    </div>
+    <div class="card-body">
+      {% if citas_pendientes %}
+      <table class="table">
+        <thead>
+          <tr><th>Hora</th><th>Mascota</th><th>Servicio</th><th>Groomer</th><th></th></tr>
+        </thead>
+        <tbody>
+          {% for cita in citas_pendientes %}
+          <tr>
+            <td>{{ cita.fecha_hora_inicio|time:"H:i" }}</td>
+            <td>{{ cita.mascota.nombre }}</td>
+            <td>{{ cita.servicio.nombre }}</td>
+            <td>{{ cita.groomer }}</td>
+            <td>
+              <a href="{% url 'agenda:detalle_cita' cita.pk %}" class="btn btn-xs btn-outline">Ver</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted">No hay citas pendientes para hoy.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Alertas de inventario -->
+  <div class="card">
+    <div class="card-header">
+      <h3>⚠️ Inventario crítico</h3>
+      <a href="{% url 'inventario:alertas' %}" class="btn btn-sm btn-outline">Ver todo</a>
+    </div>
+    <div class="card-body">
+      {% if productos_criticos %}
+      <ul class="alert-list">
+        {% for p in productos_criticos %}
+        <li class="alert-item alert-warning">
+          <strong>{{ p.nombre }}</strong>
+          <span>Stock: {{ p.stock_actual }} / mín: {{ p.stock_minimo }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p class="text-muted">✅ Todo el inventario está en niveles normales.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

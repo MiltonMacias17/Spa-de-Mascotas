@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% block title %}Factura #{{ factura.pk }}{% endblock %}
+{% block page_title %}Factura #{{ factura.pk }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:700px">
+  <div class="card-body">
+    <div style="display:flex;justify-content:space-between;align-items:start">
+      <div>
+        <h2>🐾 Pet Spa</h2>
+        <p>Factura N° {{ factura.numero_secuencial }}</p>
+        <p>{{ factura.fecha_emision|date:"d/m/Y H:i" }}</p>
+      </div>
+      <div style="text-align:right">
+        <p><strong>Cliente:</strong> {{ factura.cliente.nombre }}</p>
+        <p><strong>CI:</strong> {{ factura.cliente.ci }}</p>
+        <span class="badge badge-{{ factura.estado }}">{{ factura.get_estado_display }}</span>
+      </div>
+    </div>
+    <table class="table" style="margin-top:1.5rem">
+      <thead><tr><th>Descripción</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr></thead>
+      <tbody>
+        {% for item in factura.items.all %}
+        <tr>
+          <td>{{ item.descripcion }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td>Bs. {{ item.precio_unitario }}</td>
+          <td>Bs. {{ item.subtotal }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><td colspan="3">Subtotal</td><td>Bs. {{ factura.subtotal }}</td></tr>
+        {% if factura.impuesto %}<tr><td colspan="3">Impuesto</td><td>Bs. {{ factura.impuesto }}</td></tr>{% endif %}
+        <tr><td colspan="3"><strong>Total</strong></td><td><strong>Bs. {{ factura.total }}</strong></td></tr>
+      </tfoot>
+    </table>
+    <p><strong>Método de pago:</strong> {{ factura.get_metodo_pago_display }}</p>
+    <div class="form-actions">
+      <a href="{% url 'facturacion:lista' %}" class="btn btn-outline">Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

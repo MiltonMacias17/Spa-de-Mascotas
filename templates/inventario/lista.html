@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Inventario{% endblock %}
+{% block page_title %}Inventario{% endblock %}
+{% block topbar_actions %}
+<a href="{% url 'inventario:nuevo' %}" class="btn btn-primary btn-sm">+ Nuevo Producto</a>
+<a href="{% url 'inventario:alertas' %}" class="btn btn-warning btn-sm">⚠️ Alertas</a>
+{% endblock %}
+{% block content %}
+
+{% if bajo_stock %}
+<div class="alert alert-warning">
+  ⚠️ <strong>{{ bajo_stock|length }} producto(s)</strong> con stock por debajo del mínimo.
+  <a href="{% url 'inventario:alertas' %}">Ver alertas</a>
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="card-body">
+    <table class="table">
+      <thead><tr><th>SKU</th><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Mín.</th><th>Tipo</th><th></th></tr></thead>
+      <tbody>
+        {% for p in productos %}
+        <tr class="{% if p.bajo_stock %}row-warning{% endif %}">
+          <td><code>{{ p.sku }}</code></td>
+          <td>
+            {% if p.imagen %}<img src="{{ p.imagen.url }}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:.5rem">{% endif %}
+            {{ p.nombre }}
+          </td>
+          <td>{{ p.categoria }}</td>
+          <td>Bs. {{ p.precio_base }}</td>
+          <td>
+            <span {% if p.bajo_stock %}class="text-danger font-bold"{% endif %}>{{ p.stock_actual }}</span>
+          </td>
+          <td>{{ p.stock_minimo }}</td>
+          <td>{% if p.es_insumo %}<span class="badge badge-orange">Insumo</span>{% else %}<span class="badge badge-blue">Tienda</span>{% endif %}</td>
+          <td>
+            <a href="{% url 'inventario:editar' p.pk %}" class="btn btn-xs btn-outline">Editar</a>
+            <a href="{% url 'inventario:entrada' p.pk %}" class="btn btn-xs btn-success">+Stock</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" class="text-center text-muted">Sin productos registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

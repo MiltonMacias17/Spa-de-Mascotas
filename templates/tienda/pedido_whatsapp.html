@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block title %}Hacer Pedido{% endblock %}
+{% block page_title %}Confirmar Pedido{% endblock %}
+{% block content %}
+<div class="card" style="max-width:600px">
+  <div class="card-body" style="text-align:center">
+    <div style="font-size:3rem">📱</div>
+    <h3>¡Tu pedido está listo!</h3>
+    <p>Elige cómo quieres enviarlo:</p>
+
+    <div style="margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="{{ link_wa }}" target="_blank" class="btn btn-success btn-lg">
+        💬 Enviar por WhatsApp
+      </a>
+      <a href="{{ link_tg }}" target="_blank" class="btn btn-primary btn-lg">
+        ✈️ Enviar por Telegram
+      </a>
+    </div>
+
+    <div class="card" style="text-align:left;margin-top:1.5rem">
+      <div class="card-header"><h4>Resumen del pedido</h4></div>
+      <div class="card-body">
+        <table class="table">
+          {% for item in carrito.items.all %}
+          <tr>
+            <td>{{ item.producto.nombre }}</td>
+            <td>x{{ item.cantidad }}</td>
+            <td>Bs. {{ item.subtotal }}</td>
+          </tr>
+          {% endfor %}
+          <tr><td colspan="2"><strong>Total</strong></td><td><strong>Bs. {{ carrito.total }}</strong></td></tr>
+        </table>
+      </div>
+    </div>
+    <a href="{% url 'tienda:catalogo' %}" class="btn btn-outline" style="margin-top:1rem">Seguir comprando</a>
+  </div>
+</div>
+{% endblock %}

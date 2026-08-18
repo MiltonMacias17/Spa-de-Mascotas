@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Agenda{% endblock %}
+{% block page_title %}Agenda{% endblock %}
+{% block topbar_actions %}
+{% if user.rol.nombre != 'groomer' %}
+<a href="{% url 'agenda:nueva_cita' %}" class="btn btn-primary btn-sm">+ Nueva Cita</a>
+<a href="{% url 'agenda:bloqueos' %}" class="btn btn-outline btn-sm">Bloqueos</a>
+{% endif %}
+{% endblock %}
+{% block content %}
+
+<!-- Filtros rápidos -->
+{% if groomers %}
+<div class="filter-bar">
+  <span>Groomer:</span>
+  <button class="filter-btn active" data-groomer="all">Todos</button>
+  {% for g in groomers %}
+  <button class="filter-btn" data-groomer="{{ g.pk }}">{{ g.usuario.get_full_name|default:g.usuario.email }}</button>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Calendario visual -->
+<div class="card">
+  <div class="card-body" style="padding:0">
+    <div id="calendar"></div>
+  </div>
+</div>
+
+<!-- Lista de citas del día -->
+<div class="card" style="margin-top:1rem">
+  <div class="card-header"><h3>Citas programadas</h3></div>
+  <div class="card-body">
+    {% if citas %}
+    <table class="table">
+      <thead><tr><th>Hora</th><th>Mascota</th><th>Servicio</th><th>Groomer</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+        {% for cita in citas %}
+        <tr>
+          <td>{{ cita.fecha_hora_inicio|date:"d/m H:i" }}</td>
+          <td>{{ cita.mascota.nombre }}</td>
+          <td>{{ cita.servicio.nombre }}</td>
+          <td>{{ cita.groomer }}</td>
+          <td><span class="badge badge-{{ cita.estado }}">{{ cita.get_estado_display }}</span></td>
+          <td><a href="{% url 'agenda:detalle_cita' cita.pk %}" class="btn btn-xs btn-outline">Ver</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="text-muted">No hay citas en los próximos días.</p>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+const eventosCalendario = {{ eventos_json|safe }};
+</script>
+<script src="{% static 'js/calendario.js' %}"></script>
+{% endblock %}

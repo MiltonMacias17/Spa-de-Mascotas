@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Mi Perfil{% endblock %}
+{% block page_title %}Mi Perfil{% endblock %}
+{% block content %}
+<div class="card" style="max-width:600px">
+  <div class="card-body">
+    <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.5rem">
+      <div style="width:80px;height:80px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:2rem;color:#fff">
+        {{ usuario.first_name|first|upper|default:usuario.email|first|upper }}
+      </div>
+      <div>
+        <h2 style="margin:0">{{ usuario.get_full_name|default:usuario.email }}</h2>
+        <span class="badge badge-primary">{{ usuario.rol }}</span>
+      </div>
+    </div>
+    <table class="table">
+      <tr><th>Email</th><td>{{ usuario.email }}</td></tr>
+      <tr><th>Teléfono</th><td>{{ usuario.telefono|default:"—" }}</td></tr>
+      <tr><th>Cuenta verificada</th><td>{% if usuario.email_verificado %}✅ Sí{% else %}❌ No{% endif %}</td></tr>
+      <tr><th>2FA</th><td>{% if usuario.two_factor_activo %}✅ Activo{% else %}❌ Inactivo{% endif %}</td></tr>
+      <tr><th>Último acceso</th><td>{{ usuario.ultimo_acceso|default:"—" }}</td></tr>
+    </table>
+    <div style="margin-top:1rem;display:flex;gap:1rem;flex-wrap:wrap">
+      {% if usuario.rol.nombre == 'admin' and not usuario.two_factor_activo %}
+      <a href="{% url 'usuarios:setup_2fa' %}" class="btn btn-warning">Activar 2FA</a>
+      {% endif %}
+      <a href="{% url 'usuarios:logout' %}" class="btn btn-outline">Cerrar Sesión</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

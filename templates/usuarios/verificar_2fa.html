@@ -1,0 +1,15 @@
+{% extends 'base_auth.html' %}
+{% block title %}Verificación 2FA{% endblock %}
+{% block content %}
+<h2 class="form-title">Verificación en Dos Pasos</h2>
+<p class="form-desc">Abre Google Authenticator e ingresa el código de 6 dígitos.</p>
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Código de autenticación</label>
+    <input type="text" name="codigo" maxlength="6" minlength="6" class="form-control"
+           placeholder="000000" autofocus autocomplete="off" style="text-align:center;font-size:2rem;letter-spacing:.5rem">
+  </div>
+  <button type="submit" class="btn btn-primary btn-full">Verificar</button>
+</form>
+{% endblock %}

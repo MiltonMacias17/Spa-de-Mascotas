@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Notificaciones{% endblock %}
+{% block page_title %}Notificaciones{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    {% if notificaciones %}
+    <div class="notif-list">
+      {% for n in notificaciones %}
+      <div class="notif-item {% if not n.exitoso %}notif-pending{% endif %}">
+        <div class="notif-icon">
+          {% if n.tipo_evento == 'confirmacion' %}📅
+          {% elif n.tipo_evento == 'recordatorio_24h' or n.tipo_evento == 'recordatorio_2h' %}⏰
+          {% elif n.tipo_evento == 'listo_recoger' %}✅
+          {% elif n.tipo_evento == 'bajo_stock' %}⚠️
+          {% else %}🔔{% endif %}
+        </div>
+        <div class="notif-content">
+          <span class="notif-tipo">{{ n.get_tipo_evento_display }}</span>
+          <p>{{ n.mensaje }}</p>
+          <small class="text-muted">{{ n.fecha_programacion|date:"d/m/Y H:i" }} · {{ n.get_tipo_canal_display }}</small>
+        </div>
+        <span class="notif-estado">{% if n.exitoso %}✅{% else %}⏳{% endif %}</span>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔔</div>
+      <p>No tienes notificaciones.</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

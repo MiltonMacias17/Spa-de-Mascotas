@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Entrada de Stock{% endblock %}
+{% block page_title %}Entrada de Stock — {{ producto.nombre }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:400px">
+  <div class="card-body">
+    <p>Stock actual: <strong>{{ producto.stock_actual }}</strong></p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Cantidad a agregar</label>
+        <input type="number" name="cantidad" class="form-control" min="1" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Nota</label>
+        <input type="text" name="nota" class="form-control" placeholder="Compra, ajuste, etc.">
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Agregar Stock</button>
+        <a href="{% url 'inventario:lista' %}" class="btn btn-outline">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

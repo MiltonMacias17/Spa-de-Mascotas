@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}Reporte de Ocupación{% endblock %}
+{% block page_title %}Reporte de Ocupación{% endblock %}
+{% block content %}
+
+<div class="filter-bar">
+  <form method="get">
+    <label>Últimos días:</label>
+    <select name="dias" class="form-control" onchange="this.form.submit()">
+      <option value="7" {% if dias == 7 %}selected{% endif %}>7 días</option>
+      <option value="14" {% if dias == 14 %}selected{% endif %}>14 días</option>
+      <option value="30" {% if dias == 30 %}selected{% endif %}>30 días</option>
+    </select>
+  </form>
+</div>
+
+<div class="kpi-grid">
+  <div class="card">
+    <div class="card-header"><h3>Por Groomer</h3></div>
+    <div class="card-body">
+      {% for g, total in por_groomer.items %}
+      <div class="reporte-bar-item">
+        <span>{{ g }}</span>
+        <div class="bar-wrap">
+          <div class="bar-fill" style="width:{{ total }}0%"></div>
+        </div>
+        <span>{{ total }}</span>
+      </div>
+      {% empty %}<p class="text-muted">Sin datos.</p>{% endfor %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h3>Por Servicio</h3></div>
+    <div class="card-body">
+      {% for s, total in por_servicio.items %}
+      <div class="reporte-bar-item">
+        <span>{{ s }}</span>
+        <div class="bar-wrap">
+          <div class="bar-fill" style="width:{{ total }}0%"></div>
+        </div>
+        <span>{{ total }}</span>
+      </div>
+      {% empty %}<p class="text-muted">Sin datos.</p>{% endfor %}
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h3>Citas por Día</h3></div>
+  <div class="card-body">
+    {% for dia, total in por_dia.items %}
+    <div class="reporte-bar-item">
+      <span style="min-width:90px">{{ dia }}</span>
+      <div class="bar-wrap">
+        <div class="bar-fill" style="width:{{ total }}0%"></div>
+      </div>
+      <span>{{ total }}</span>
+    </div>
+    {% empty %}<p class="text-muted">Sin datos.</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}
